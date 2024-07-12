@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GEE - Roy</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.1/flatpickr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
+
+</head>
+<body>
+  <div id="container">
+    <div id="sidebar">
+      <h2>Controls</h2>
+      <div class="group">
+        <input type="text" id="calendar-range">
+        <span class="bar"></span>
+        <label class="input-label">Range of dates</label>
+        <br>
+        <div id="nested-combobox">
+          <label for="missionSelect">Item type:</label>
+          <select id="missionSelect" class="custom-select">
+            <option value="">Select a item type</option>
+          </select>
+        </br>
+          <label for="bandSelect">Asset type:</label>
+          <select id="bandSelect" class="custom-select">
+            <option value="">Select a asset type</option>
+          </select>
+        </br>
+          <label for="bundleSelect">Bundle type:</label>
+          <select id="bundleSelect" class="custom-select">
+            <option value="">Select a bundle type</option>
+          </select>
+        </br>
+          <div class="api-key-container">
+            <label for="apiKey">API Key:</label>
+            <input type="password" id="apiKey" class="custom-input">
+            <button id="toggleApiKey" class="toggle-button">Show</button>
+          </div>          
+        </div>
+        </br>
+        <div class="slider-container">
+          <label for="cloudCoverSlider" class="slider-label">Cloud Cover: <span id="cloudCoverValue">50</span>%</label>
+          <input type="range" min="0" max="100" value="50" class="slider" id="cloudCoverSlider" step="5">
+        </div>
+        <br>
+        <div class="drawContainer">
+          <div class="drawButtons">
+            <button class="drawButton" id="drawPoint" title="Point"></button>
+            <button class="drawButton" id="drawRectangle" title="Rectangle"></button>
+            <button class="drawButton" id="drawPolygon" title="Polygon"></button>
+            <button class="drawButton" id="drawClear" title="Clear"></button>
+          </div>
+        </div>
+    <br>
+    <button id="getDataButton" class="runButton">Search</button>    
+    </div>
+    <div id="resultContainer" class="result-container"></div>  
+    </div>
+    <div id="map-container">
+      <div id="map">
+        <div id="layerList">
+          <h3>Capas</h3>
+          <ul id="layerUl"></ul>
+        </div>
+      </div>
+    </div>
+  </div>      
+  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/services.js"></script>
+  <script type="module" src="js/utils.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Use root/example as user/password credentials
+# docker compose -p treeads down
+# docker-compose -p treeads -f docker/ee-backend-stack.yml build
+# docker-compose -p treeads -f docker/ee-backend-stack.yml up -d
+version: '3.8'
+
+services:
+  gee-map-services:
+    image: gee-map-server:0.0.1
+    hostname: gee-map-service
+    restart: unless-stopped
+    volumes:
+      - ../public:/usr/src/app/public
+    env_file: ./.env
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    build:
+      context: ../
+      dockerfile: docker/ee.Dockerfile
+    networks:
+      - webgis-backend-network
+
+networks:
+  webgis-backend-network:
+    driver: bridge
+    name: webgis-backend-network

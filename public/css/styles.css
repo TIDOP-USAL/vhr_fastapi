@@ -1,0 +1,514 @@
+body, html, #container {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  #container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  #sidebar {
+    width: 30%;
+    height: 100%;
+    background-color: #f5f5f5;
+    padding: 0px 15px 0px 15px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+  }
+  
+  #map-container {
+    flex-grow: 1;
+    height: 100%;
+    position: relative;
+  }
+  
+  #map {
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+  }
+  
+
+/* Calendar */
+.group {
+    position: relative;
+    margin: 30px 20px 50px;
+}
+
+input {
+    color: #424242;
+    font-size: 1.2em;
+    padding: 10px 10px 5px 5px;
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #607D8B;
+}
+input:focus {
+    outline: none;
+}
+
+label.input-label {
+    color: #616161;
+    position: absolute;
+}
+
+input:focus ~ label.input-label {
+    color: #0288D1;
+}
+
+input[readonly] ~ label.input-label {
+    top: -15px;
+    font-size: 0.9em;
+}
+
+.bar {
+    position: relative;
+    display: block;
+    width: 315px;
+}
+
+.bar:before,
+.bar:after {
+    background: #0288D1;
+    content: '';
+    height: 2px;
+    width: 0;
+    bottom: 1px;
+    position: absolute;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+
+.bar:before {
+    left: 50%;
+}
+
+.bar:after {
+    right: 50%;
+}
+
+input:focus ~ .bar:before,
+input:focus ~ .bar:after {
+    width: 50%;
+}
+
+
+/* Estilos específicos para los combobox */
+.custom-select {
+    color: #424242;
+    font-size: 1.2em;
+    padding: 10px;
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #607D8B;
+    background: transparent;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.custom-select:focus {
+    border-bottom: 2px solid #0288D1;
+}
+
+.custom-select:disabled {
+    color: #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.custom-select ~ .input-label {
+    color: #616161;
+    position: absolute;
+    top: 15px;
+    left: 10px;
+    transition: 0.2s ease all;
+}
+
+.custom-select:focus ~ .input-label {
+    top: -15px;
+    left: 5px;
+    font-size: 0.9em;
+    color: #0288D1;
+}
+
+.custom-select:hover {
+    cursor: pointer;
+}
+
+
+/* Draw styles */
+.drawContainer {
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.drawButtons {
+    width: 220px;
+    /* margin-top: 15px; */
+    display: flex;
+    flex-direction: row;
+    /* justify-content: center; */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.drawButton {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    width: 50px;
+    height: 50px;
+    background-color: #dadada;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+.drawButton:active,
+.drawButton:focus {
+    background-color: #01579B;
+}
+
+#drawRectangle {
+    background-image: url("img/rectangle.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25px;
+}
+
+#drawPoint {
+    background-image: url("img/dot.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 20px;
+}
+
+#drawPolygon {
+    background-image: url("img/polygon.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 20px;
+}
+
+#drawClear {
+    background-image: url("img/delete.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #F45050;
+    background-size: 20px;
+    opacity: 0.8;
+}
+
+/* run button */
+.runButton {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    width: 100px;
+    height: 50px;
+    background-color: #dadada;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    margin-top: 15px;
+    margin-left: auto;
+}
+.runButton:hover {
+    background-color: #0288D1;
+}
+
+/* Estilos para el botón toggleAdvanced */
+#toggleAdvanced {
+    background-color: #0288D1;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    position: relative; /* Importante para el posicionamiento del pseudo-elemento */
+  }
+
+.result-container {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+margin-top: 20px;
+}
+
+.result-item {
+border: 1px solid #ccc;
+padding: 10px;
+border-radius: 5px;
+width: 300px;
+box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.result-item h3 {
+margin-top: 0;
+}
+
+.result-item img {
+max-width: 100%;
+}
+/* Estilos de list layers */
+#layerList {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000; /* Asegurarte de que se muestre sobre el mapa */
+    background: rgba(255, 255, 255, 0.9); /* Aumentar la opacidad un poco para mejor legibilidad */
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1); /* Agregar un poco de sombra para destacarlo */
+    max-height: 300px; /* Ajusta según tus necesidades */
+    overflow-y: auto;
+    font-size: 1rem; /* Tamaño de fuente consistente con otros elementos */
+    color: #424242; /* Color de fuente consistente con otros elementos */
+    width: 250px; /* Establecer un ancho para que se vea más ordenado */
+}
+
+#layerList h3 {
+    margin: 0 0 10px;
+    font-size: 1.2rem; /* Tamaño de fuente más grande para el título */
+    color: #0288D1; /* Color para hacer el título más destacado */
+    border-bottom: 1px solid #607D8B; /* Línea debajo del título para separarlo del contenido */
+    padding-bottom: 5px;
+}
+
+#layerUl {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#layerUl li {
+    margin: 5px 0;
+    display: flex; /* Flexbox para alinear los elementos del listado */
+    justify-content: space-between;
+}
+
+#layerUl li label {
+    margin-right: 10px;
+}
+
+input[type="range"] {
+    flex-grow: 1; /* Tomar el espacio restante */
+}
+
+input[type="checkbox"] {
+    margin-right: 10px; /* Añadir un poco de margen a la casilla de verificación si la tienes */
+}
+
+#layerUl button {
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+
+/* Slider */
+.slider-container {
+    position: relative;
+    margin: 20px 0;
+}
+
+.slider-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+/* CloudMask checkbox */
+.custom-checkbox-container {
+    position: relative;
+    margin: 20px 0;
+    /* font-size: 1.2em; */
+}
+
+.checkbox-label {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    /* font-size: 1.2em; */
+    color: #424242;
+    user-select: none;
+}
+
+.custom-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.custom-checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 17px;
+    width: 17px;
+    background-color: #eee;
+    border: 1px solid #607D8B;
+    border-radius: 4px;
+    /* Center */
+    display: flex;
+    justify-content: center;
+}
+
+.checkbox-label:hover .custom-checkmark {
+    background-color: #f1f1f1;
+}
+
+.custom-checkbox:checked ~ .custom-checkmark {
+    background-color: #0288D1;
+    border: none;
+}
+
+.custom-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 4px;
+    top: 4px;
+    width: 3px;
+    height: 3px;
+    border: solid white;
+    border-width: 0 2 2 0;
+    transform: rotate(45deg);
+}
+
+.custom-checkbox:checked ~ .custom-checkmark:after {
+    display: block;
+}
+
+
+/* Flatpickr event */
+.flatpickr-day.highlight {
+    background-color: #b3e5fc !important;
+    border-color: #b3e5fc !important;
+}
+.event {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 150px;
+    bottom: 5px;
+    left: calc(50% - 1.5px);
+    content: " ";
+    display: block;
+    background: #f64747;
+}
+
+/* Graph */
+#chartOverlay {
+    position: absolute;
+    top: auto;
+    bottom: 25px;
+    right: 10px;
+    width: 540px; /* ajustar según necesidad */
+    height: 300px; /* ajustar según necesidad */
+    background-color: rgba(255, 255, 255, 0.7); /* fondo blanco con transparencia */
+    border-radius: 5px;
+    overflow: auto; /* permitir desplazamiento si el contenido es muy grande */
+    padding: 10px;
+    z-index: 10; /* garantizar que aparezca sobre otros elementos */
+}
+
+#chartOverlay.minimized {
+    height: 30px; /* o el tamaño que prefieras para el botón */
+    width: 120px; /* ajusta según necesites */
+    overflow: hidden;
+}
+
+/* Multitemporal-images */
+#multitemporal-images {
+    background: #f8f8f8;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    overflow-x: auto; /* Permite desplazamiento horizontal si hay muchas imágenes */
+  }
+  
+  #image-slider {
+    white-space: nowrap; /* Asegura que todas las imágenes estén en línea */
+  }
+  
+  #image-slider img {
+    height: 100px; /* Ajusta a la altura deseada */
+    margin-right: 10px; /* Espacio entre imágenes */
+    display: inline-block; /* Muestra imágenes en línea */
+    vertical-align: bottom; /* Alinea imágenes en la parte inferior */
+  }
+
+/* Statistical canvas */
+#statisticsDiv {
+    /* Set to the left down corner */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    /* Add height and width */
+    width: 300px;
+    height: 200px;
+}
