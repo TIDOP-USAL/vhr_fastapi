@@ -6,9 +6,8 @@ const host = "http://127.0.0.1:8000";
 // Async functions to call the API
 //////////////////////////////////////////////////////////////////////
 
-const get_query = async (apiKey, itemName, selectedAsset, 
-                              cloudCover, geometry, startDate, 
-                              endDate) => {
+async function get_query(apiKey, geometry, itemName, startDate, endDate, 
+                         cloudCover, selectedAsset){
   let coordinates;
   coordinates = valid_geometry(geometry);
   // Crear la URL con todos los parámetros necesarios
@@ -19,20 +18,33 @@ const get_query = async (apiKey, itemName, selectedAsset,
     item_type: itemName,
     start_date: startDate,
     end_date: endDate,
-    cloud_cover: cloudCover,
+    cloud_cover: parseFloat(cloudCover),
     asset: selectedAsset
   };
 
-const response = await fetch(url, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(body)
-});
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
 
-const data = await response.json();
-return displayQueryResults(data, apiKey); 
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Error: ${response.status} - ${error}`);
+    }
+    
+    const data = await response.json();
+    if (data.status === 'success') {
+      alert(data.message); // Display success message
+      displayQueryResults(data, apiKey);
+    }
+  } catch (error) {
+    console.error('Error al realizar la búsqueda:', error);
+    alert(`Error al realizar la búsqueda: ${error.message}`);
+  } 
 };
 
 function displayQueryResults(data, apiKey) {
@@ -40,6 +52,7 @@ function displayQueryResults(data, apiKey) {
   resultContainer.innerHTML = ''; // Clear previous results
 
   Object.values(data).forEach(item => {
+    console.log('Processing item:', item);
     const itemElement = document.createElement('div');
     itemElement.className = 'result-item';
 

@@ -4,7 +4,6 @@ from src.utils import (get_auth, create_filters, create_request,
                      create_and_download, query_data)
 from src.basemodels import ItemDict
 from typing import Dict
-import datetime
 
 nest_asyncio.apply()
 

@@ -262,6 +262,6 @@ document.getElementById('getDataButton').addEventListener('click', async functio
   const endDate = dateRange.length > 1 ? dateRange[1].toLocaleDateString('en-CA') : null;
 
 
-  await get_query(apiKey, itemName, selectedAsset, cloudCover, 
-                  geometry, startDate, endDate);
+  await get_query(apiKey, geometry, itemName, startDate, endDate,
+                  cloudCover, selectedAsset);
 });

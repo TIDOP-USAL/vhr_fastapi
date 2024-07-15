@@ -7,35 +7,26 @@ import planet
 from typing import Dict, List, Union
 from src.basemodels import SFilterDict, ItemDict, OrderDict
 
-def identify_geometry(coordinates) -> str:
-        '''
-        Identify the geometry type from the coordinates.
 
-        Args:
-        - coordinates (str): The coordinates in JSON format.
-
-        Returns:
-        - str: The geometry type.
-        '''
-
-        # Convertir la cadena JSON a un objeto Python
-        coords = json.loads(coordinates)
-        
-        # Verify if it is a point
-        if isinstance(coords, list) and len(coords) == 2 and all(isinstance(coord, 
-                     (float, int)) for coord in coords):
-            return "Point"
-        
-        # Verify if it is a line or polygon
-        if isinstance(coords, list) and all(isinstance(coord, list) for coord in coords):
-            if len(coords) == 2 and all(len(coord) == 2 for coord in coords):
+def identify_and_convert(geometry_json_str):
+    # Convertir la cadena JSON a una estructura de datos Python
+    coordinates = json.loads(geometry_json_str)
+    
+    # Determinar el tipo de geometría basado en la estructura de los corchetes
+    if isinstance(coordinates, list):
+        if all(isinstance(coord, (list, tuple)) and len(coord) == 2 for coord in coordinates):
+            # Caso de un conjunto de coordenadas simples: Punto o Línea
+            if len(coordinates) == 1:
+                return "Point"
+            elif coordinates[0] == coordinates[-1]:
+                return "Polygon"
+            else:
                 return "LineString"
             
-            # Verificar si es un polígono
-            if all(len(coord) == 2 for coord in coords[0]):
-                if len(coords[0]) >= 3 and coords[0][0] == coords[0][-1]:
-                    return "Polygon"
-        return "Unknown"
+        else:
+            raise ValueError("La estructura de datos no corresponde a una geometría conocida.")
+    else:
+        raise ValueError("El formato de entrada no es válido.")
 
     
 # Get and store credentials in an Auth object
@@ -74,27 +65,28 @@ def create_filters(
     Returns:
     - SFilterDict: The filters for the Planet API request.
     """
-        
     # For geometry
     geometry_filter = {
         "type": "GeometryFilter",
         "field_name": "geometry",
-        "config": {"type": f"{identify_geometry(geometry_json)}", 
-                   "coordinates": json.loads(geometry_json)}
+        "config": {"type": identify_and_convert(geometry_json), 
+                   "coordinates": [json.loads(geometry_json)]}
     }
 
     # For date range
     date_range_filter = {
         "type": "DateRangeFilter",
         "field_name": "acquired",
-        "config": {"gte": start_date, "lte": end_date},
+        "config": {"gte": f"{start_date}T00:00:00Z", 
+                   "lte": f"{end_date}T00:00:00Z"
+                  }
     }
 
     # For metadata filter
     cloud_cover_filter = {
         "type": "RangeFilter",
         "field_name": "cloud_cover",
-        "config": {"lte": cloud_cover},
+        "config": {"lte": cloud_cover}
     }
 
     # Stats API request object
