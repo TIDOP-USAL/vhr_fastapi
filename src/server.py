@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from src.routes import planet_function
+import planet_function
 import uvicorn
 
 app = FastAPI()
@@ -23,5 +23,4 @@ app.include_router(planet_function.router, prefix="/planet")
 
 # Run the app
 if __name__ == "__main__":
-    uvicorn.run("src.server:app", host="127.0.0.1", port=8000, 
-                    loop="asyncio", reload=True)
+    uvicorn.run("server:app", host="127.0.0.1", port=8000, loop="asyncio", reload=True)

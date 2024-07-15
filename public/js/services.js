@@ -6,8 +6,7 @@ const host = "http://127.0.0.1:8000";
 // Async functions to call the API
 //////////////////////////////////////////////////////////////////////
 
-async function get_query(apiKey, geometry, itemName, startDate, endDate, 
-                         cloudCover, selectedAsset){
+const get_query = async function (apiKey, geometry, itemName, startDate, endDate,  cloudCover, selectedAsset){
   let coordinates;
   coordinates = valid_geometry(geometry);
   // Crear la URL con todos los parámetros necesarios
@@ -35,19 +34,19 @@ async function get_query(apiKey, geometry, itemName, startDate, endDate,
       const error = await response.text();
       throw new Error(`Error: ${response.status} - ${error}`);
     }
-    
     const data = await response.json();
-    if (data.status === 'success') {
-      alert(data.message); // Display success message
-      displayQueryResults(data, apiKey);
-    }
+    return data
+  //   if (data.status === 'success') {
+  //     alert(data.message); // Display success message
+  //     displayQueryResults(data, apiKey);
+  //   }
   } catch (error) {
     console.error('Error al realizar la búsqueda:', error);
     alert(`Error al realizar la búsqueda: ${error.message}`);
   } 
 };
 
-function displayQueryResults(data, apiKey) {
+const displayQueryResults = function(data, apiKey) {
   const resultContainer = document.getElementById('resultContainer');
   resultContainer.innerHTML = ''; // Clear previous results
 
@@ -73,7 +72,7 @@ function displayQueryResults(data, apiKey) {
     itemElement.appendChild(instrument);
 
     const thumbnailImage = document.createElement('img');
-    thumbnailImage.src = `${item._links.thumbnail}?auth_api=${apiKey}`;
+    thumbnailImage.src = `${item._links.thumbnail}?api_key=${apiKey}`;
     itemElement.appendChild(thumbnailImage);
 
     resultContainer.appendChild(itemElement);
@@ -88,7 +87,7 @@ function displayQueryResults(data, apiKey) {
   }
 }
 
-export {get_query};
+export {get_query, displayQueryResults};
 
 // const post_download = async (apiKey, itemName, selectedAsset, 
 //                             selectedBundle, cloudCover, 

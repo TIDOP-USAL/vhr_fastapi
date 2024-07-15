@@ -3,10 +3,8 @@ import json
 import pathlib
 import planet
 
-
 from typing import Dict, List, Union
-from src.basemodels import SFilterDict, ItemDict, OrderDict
-
+from basemodels import SFilterDict, ItemDict, OrderDict
 
 def identify_and_convert(geometry_json_str):
     # Convertir la cadena JSON a una estructura de datos Python

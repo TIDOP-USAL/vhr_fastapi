@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from src.basemodels import DownloadRequest, SearchRequest
-from src.controller import methods
+from basemodels import DownloadRequest, SearchRequest
+import methods
 
 router = APIRouter()
 

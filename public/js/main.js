@@ -1,4 +1,4 @@
-import { get_query } from './services.js';
+import { get_query, displayQueryResults } from './services.js';
 //////////////////////////////////////////////////////////////////////
 // Initialize the map
 const map = new ol.Map({
@@ -262,6 +262,8 @@ document.getElementById('getDataButton').addEventListener('click', async functio
   const endDate = dateRange.length > 1 ? dateRange[1].toLocaleDateString('en-CA') : null;
 
 
-  await get_query(apiKey, geometry, itemName, startDate, endDate,
-                  cloudCover, selectedAsset);
+  const data_urls = await get_query(apiKey, geometry, itemName, startDate, endDate, cloudCover, selectedAsset);
+  console.log(data_urls)
+  displayQueryResults(data_urls, apiKey);
+
 });
