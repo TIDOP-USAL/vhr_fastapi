@@ -13,10 +13,10 @@ async def post_querydata(request: SearchRequest):
         raise HTTPException(status_code=500, detail=str(e))
     
 
-# # DOWNLOAD PLANET IMAGERY
-# @router.post("/planet-download")
-# async def download_planet(request: Request):
-#     try:
-#         return await methods.download_planet(**request.model_dump())
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
+# DOWNLOAD PLANET IMAGERY
+@router.post("/download")
+async def download_planet(request: DownloadRequest):
+    try:
+        return await methods.create_download(**request.model_dump())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

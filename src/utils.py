@@ -6,6 +6,7 @@ import planet
 from typing import Dict, List, Union
 from basemodels import SFilterDict, ItemDict, OrderDict
 
+
 def identify_and_convert(geometry_json_str):
     # Convertir la cadena JSON a una estructura de datos Python
     coordinates = json.loads(geometry_json_str)
@@ -151,7 +152,7 @@ def create_request(
 
     Args:
     - item_type (str): The item type.
-    - item_lists (List[str]): The list of item ids.
+    - item_lists (List[str]): Get the ID lists
     - geometry_json (str): The path to the geojson file.
     - order_name (str): The name of the order request.
     - product_bundle (str): The product bundle to order.
@@ -160,21 +161,19 @@ def create_request(
     - OrderDict: The order request.
     """
 
-    # Get the item ids
-    item_ids = [item["id"] for item in item_lists]
-
     # Create order request
     order = planet.order_request.build_request(
         name=order_name,
         products=[
             planet.order_request.product(
-                item_ids=item_ids,
+                item_ids=item_lists,
                 product_bundle=product_bundle,
                 item_type=item_type,
             )
         ],
         tools=[
-            planet.order_request.clip_tool(aoi=geometry_json),            
+            planet.order_request.clip_tool(aoi={"type": identify_and_convert(geometry_json), 
+                                                "coordinates": [json.loads(geometry_json)]}),            
             planet.order_request.composite_tool(),
             planet.order_request.harmonize_tool("Sentinel-2")
         ],

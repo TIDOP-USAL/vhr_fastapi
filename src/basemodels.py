@@ -84,10 +84,8 @@ class SearchRequest(BaseModel):
 
 class DownloadRequest(BaseModel):
     api_key: str
-    geometry_json: str
     item_type: str
-    start_date: str
-    end_date: str
-    cloud_cover: float
-    asset: str
-    bundle: str
+    item_lists: List[str]
+    geometry_json: str
+    order_name: str
+    product_bundle: str
