@@ -44,7 +44,7 @@ def get_auth(api_key: str) -> planet.Auth:
 
 # Create filters for the Planet API request
 def create_filters(
-    geometry_json: str,
+    geometry: str,
     start_date: str="2021-01-01T00:00:00Z",
     end_date: str="2021-12-31T23:59:59Z",
     cloud_cover: float=0.5,
@@ -54,7 +54,7 @@ def create_filters(
     Create filters for the Planet API request.
 
     Args:
-    - geometry_json (str): The path to the geojson file.
+    - geometry (str): The geometry in string format.
     - date_range (Tuple[str, str]): The date range.
     - cloud_cover (float): The cloud cover percentage to filter if less
       than or equal to. The range is from 0 to 1.
@@ -68,8 +68,8 @@ def create_filters(
     geometry_filter = {
         "type": "GeometryFilter",
         "field_name": "geometry",
-        "config": {"type": identify_and_convert(geometry_json), 
-                   "coordinates": [json.loads(geometry_json)]}
+        "config": {"type": identify_and_convert(geometry), 
+                   "coordinates": [json.loads(geometry)]}
     }
 
     # For date range
@@ -103,7 +103,7 @@ def create_filters(
 
 async def query_data(
     auth: planet.Auth,
-    item_type: Union[str, List[str]],
+    item_type: str,
     sfilter: SFilterDict,
     asset: str = "ortho_analytic_4b_sr",
 ) -> Dict[str,ItemDict]:
@@ -142,8 +142,8 @@ async def query_data(
 # Create a request
 def create_request(
     item_type: str,
-    item_lists: List[str],
-    geometry_json: str,
+    item_list: List[str],
+    geometry: str,
     order_name: str,
     product_bundle: str = "analytic_sr_udm2",
 ) -> OrderDict:
@@ -153,7 +153,7 @@ def create_request(
     Args:
     - item_type (str): The item type.
     - item_lists (List[str]): Get the ID lists
-    - geometry_json (str): The path to the geojson file.
+    - geometry (str): The geometry in string format.
     - order_name (str): The name of the order request.
     - product_bundle (str): The product bundle to order.
 
@@ -166,14 +166,14 @@ def create_request(
         name=order_name,
         products=[
             planet.order_request.product(
-                item_ids=item_lists,
+                item_ids=item_list,
                 product_bundle=product_bundle,
                 item_type=item_type,
             )
         ],
         tools=[
-            planet.order_request.clip_tool(aoi={"type": identify_and_convert(geometry_json), 
-                                                "coordinates": [json.loads(geometry_json)]}),            
+            planet.order_request.clip_tool(aoi={"type": identify_and_convert(geometry), 
+                                                "coordinates": [json.loads(geometry)]}),            
             planet.order_request.composite_tool(),
             planet.order_request.harmonize_tool("Sentinel-2")
         ],
@@ -186,7 +186,7 @@ def create_request(
 async def create_and_download(
     client: planet.Session.client,
     order_detail: OrderDict,
-    directory: str = "downloads",
+    directory: str
 ) -> None:
     """
     Create an order and download the files.
@@ -196,10 +196,6 @@ async def create_and_download(
     - order_detail (OrderDict): The order request.
     - directory (str): The directory to save the downloaded files.
     """
-
-    # Create a directory to store the downloaded files
-    directory = pathlib.Path(directory)
-    directory.mkdir(parents=True, exist_ok=True)
 
     # Check the order status
     with planet.reporting.StateBar(state="creating") as bar:

@@ -1,4 +1,16 @@
-import { get_query, displayQueryResults } from './services.js';
+import { get_query, displayQueryResults, order_download } from './services.js';
+//////////////////////////////////////////////////////////////////////
+// CHANGE SECTION
+document.getElementById('toDownloadOrder').addEventListener('click', function() {
+  document.getElementById('queryData').classList.remove('active');
+  document.getElementById('downloadOrder').classList.add('active');
+});
+
+document.getElementById('toQueryData').addEventListener('click', function() {
+  document.getElementById('downloadOrder').classList.remove('active');
+  document.getElementById('queryData').classList.add('active');
+});
+
 //////////////////////////////////////////////////////////////////////
 // Initialize the map
 const map = new ol.Map({
@@ -76,7 +88,6 @@ map.getLayers().on(['add', 'remove'], updateLayerList);
 
 // Call the function once to initialize the layer list
 updateLayerList();
-
 
 //////////////////////////////////////////////////////////////////////
 // Initialize the Flatpickr calendar
@@ -262,8 +273,30 @@ document.getElementById('getDataButton').addEventListener('click', async functio
   const endDate = dateRange.length > 1 ? dateRange[1].toLocaleDateString('en-CA') : null;
 
 
-  const data_urls = await get_query(apiKey, geometry, itemName, startDate, endDate, cloudCover, selectedAsset);
-  console.log(data_urls)
-  displayQueryResults(data_urls, apiKey);
+  const post_query = await get_query(apiKey, geometry, itemName, startDate, endDate, cloudCover, selectedAsset);
+  displayQueryResults(post_query, apiKey);
 
+document.getElementById("orderDataButton").addEventListener('click', async function() {
+  // Get the selected items as a list of IDs from "selectedItemsList"
+  const selectedItemsList = document.getElementById('selectedItemsList');
+  const itemList = [];
+  Array.from(selectedItemsList.children).forEach(item => {
+    // Add value to a new set
+    itemList.push(item.textContent);
+  });
+
+  // Convert itemList to a string
+  const itemListString = itemList.toString();
+  // Get the product bundle
+  const productBundle = document.getElementById('bundleSelect').value;
+  // Generate a element to define a path to save the file
+  const SavePath = document.getElementById('savePath').value;
+  await order_download(apiKey, itemName, itemListString, geometry, SavePath, productBundle);
+
+  // Create a loading spinner
+  const spinner = document.createElement('div');
+  spinner.className = 'spinner spinner-border text-primary';
+  spinner.role = 'status';
+  document.getElementById("orderDataButton").appendChild(spinner);
+  });
 });

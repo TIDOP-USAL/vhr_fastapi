@@ -4,12 +4,14 @@ from utils import (get_auth, create_filters, create_request, create_and_download
 from basemodels import ItemDict
 from typing import Dict, List
 import datetime
+import pathlib
+import json
 
 nest_asyncio.apply()
 
 async def query_datalist(
     api_key: str,
-    geometry_json: str,
+    geometry: str,
     item_type: str,
     start_date: str,
     end_date: str,
@@ -21,7 +23,7 @@ async def query_datalist(
     
     Args:
     - api_key (str): The Planet API key.
-    - geometry_json (str): The path to the geojson file.
+    - geometry (str): The geometry in string format.
     - item_type (str): The item type to search for. Options are 'PSScene', 'PSOrthoTile',
       'REOrthoTile', 'SkySatScene', and 'Landsat8L1G', etc.
     - start_date (str): The start date for the search.
@@ -37,7 +39,7 @@ async def query_datalist(
     auth = get_auth(api_key)
 
     # Create the filters
-    sfilter = create_filters(geometry_json, start_date, end_date, 
+    sfilter = create_filters(geometry, start_date, end_date, 
                              cloud_cover, "AndFilter")
     
     # Get the items that match the filters
@@ -49,19 +51,20 @@ async def query_datalist(
 async def create_download(
     api_key: str,
     item_type: str,
-    item_lists: List[str],
-    geometry_json: str,
-    order_name: str,
-    product_bundle: str = "analytic_sr_udm2",
+    item_list: str,
+    geometry: str,
+    order_dir: str,
+    product_bundle: str
 ) -> None:
     '''
     Create and download an order with the Planet API.
 
     Args:
+    - api_key (str): The Planet API key.
     - item_type (str): The item type.
-    - item_lists (List[str]): Get the ID lists
-    - geometry_json (str): The path to the geojson file.
-    - order_name (str): The order name.
+    - item_list (List[str]): Get the ID list from items
+    - geometry (str): The geometry in string format.
+    - order_dir(str): The directory to save the order.
     - product_bundle (str): The product bundle.
     - directory (str): The directory to save the order.
     '''
@@ -74,17 +77,24 @@ async def create_download(
         client_order = sess.client("orders")
 
         # create random order name with hour, minute, and second
-        order_name = f"{order_name}_" + datetime.datetime.now().strftime(("%Y-%m-%d_%H-%M-%S"))
+        order_dir = pathlib.Path(order_dir)
+        order_name = f"planetorder_" + datetime.datetime.now().strftime(("%Y-%m-%d_%H-%M-%S"))
+        # Create the request
+        order_path = order_dir / order_name
+        order_path.mkdir(parents=True, exist_ok=True)
+
+        # Open the item list
+        item_list = [str(item) for item in item_list.split(",")]
+
         request = create_request(
             item_type,
-            item_lists,
-            geometry_json,
-            order_name,
+            item_list,
+            geometry,
+            order_path,
             product_bundle,
         )
 
         # Create a folder in your download machine
-        output_folder = f"{order_name}"
         # Create and download the order
-        await create_and_download(client_order, request, output_folder)
+        await create_and_download(client_order, request, order_path)
         print(f"Order {order_name} has been created and downloaded.")

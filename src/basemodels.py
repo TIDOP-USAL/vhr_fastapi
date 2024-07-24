@@ -75,7 +75,7 @@ class OrderDict(BaseModel):
 # For the FAST API REQUEST
 class SearchRequest(BaseModel):
     api_key: str
-    geometry_json: str
+    geometry: str
     item_type: str
     start_date: str
     end_date: str
@@ -85,7 +85,7 @@ class SearchRequest(BaseModel):
 class DownloadRequest(BaseModel):
     api_key: str
     item_type: str
-    item_lists: List[str]
-    geometry_json: str
-    order_name: str
+    item_list: str
+    geometry: str
+    order_dir: str
     product_bundle: str

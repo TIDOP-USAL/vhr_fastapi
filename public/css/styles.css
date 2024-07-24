@@ -10,7 +10,7 @@ body, html, #container {
     height: 100vh;
   }
   
-  #sidebar {
+#sidebar {
     width: 30%;
     height: 100%;
     background-color: #f5f5f5;
@@ -18,6 +18,18 @@ body, html, #container {
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
     overflow: auto;
   }
+.section {
+    display: none;
+}
+.section.active {
+    display: block;
+}
+.toggle-arrow {
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
   
   #map-container {
     flex-grow: 1;
@@ -51,11 +63,23 @@ body, html, #container {
     border: 2px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 520px;
+    overflow-y: auto;
+}
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+.pagination button {
+    padding: 5px 10px;
+    cursor: pointer;
 }
 
 .result-item {
     flex: 1 1 calc(33.333% - 20px);
     box-sizing: border-box;
+    align-items: center;
     border: 2px solid #ccc;
     padding: 10px;
     margin: 10px;
@@ -63,11 +87,12 @@ body, html, #container {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 5px;
+.item-checkbox {
+    transform: scale(1.5); /* Increase the size of the checkbox */
+    margin-right: 10px; /* Optional: Add some space between the checkbox and the text */
 }
+
+
 /* Calendar */
 .group {
     position: relative;
@@ -252,7 +277,6 @@ input:focus ~ .bar:after {
 .runButton {
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
-    padding: 0.375rem 0.75rem;
     font-size: 1rem;
     line-height: 1.5;
     width: 100px;
@@ -264,13 +288,33 @@ input:focus ~ .bar:after {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    border: none;
     margin-top: 15px;
     margin-left: auto;
 }
 .runButton:hover {
     background-color: #0288D1;
 }
+
+.spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #007bff;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Hide spinner by default */
+  .spinner-hidden {
+    display: none;
+  }
 
 /* Estilos de list layers */
 #layerList {

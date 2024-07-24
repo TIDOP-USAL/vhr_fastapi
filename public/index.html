@@ -18,66 +18,86 @@
 <body>
   <div id="container">
     <div id="sidebar">
-      <h2>Controls</h2>
-      <div class="group">
-        <input type="text" id="calendar-range">
-        <span class="bar"></span>
-        <label class="input-label">Range of dates</label>
-        <br>
-        <div id="nested-combobox">
-          <label for="missionSelect">Item type:</label>
-          <select id="missionSelect" class="custom-select">
-            <option value="">Select a item type</option>
-          </select>
-        </br>
-          <label for="bandSelect">Asset type:</label>
-          <select id="bandSelect" class="custom-select">
-            <option value="">Select a asset type</option>
-          </select>
-        </br>
-          <label for="bundleSelect">Bundle type:</label>
-          <select id="bundleSelect" class="custom-select">
-            <option value="">Select a bundle type</option>
-          </select>
-        </br>
-          <div class="api-key-container">
-            <label for="apiKey">API Key:</label>
-            <input type="password" id="apiKey" class="custom-input">
-            <button id="toggleApiKey" class="toggle-button">Show</button>
-          </div>          
+        <div id="queryData" class="section active">
+            <h2>Query Data (1/2)</h2>
+            <div class="group">
+                <input type="text" id="calendar-range">
+                <span class="bar"></span>
+                <label class="input-label">Range of dates</label>
+                <br>
+                <div id="nested-combobox">
+                    <label for="missionSelect">Item type:</label>
+                    <select id="missionSelect" class="custom-select">
+                        <option value="">Select an item type</option>
+                    </select>
+                    <br>
+                    <label for="bandSelect">Asset type:</label>
+                    <select id="bandSelect" class="custom-select">
+                        <option value="">Select an asset type</option>
+                    </select>
+                    <br>
+                    <div class="api-key-container">
+                        <label for="apiKey">API Key:</label>
+                        <input type="password" id="apiKey" class="custom-input">
+                        <button id="toggleApiKey" class="toggle-button">Show</button>
+                    </div>          
+                </div>
+                <br>
+                <div class="slider-container">
+                    <label for="cloudCoverSlider" class="slider-label">Cloud Cover: <span id="cloudCoverValue">50</span>%</label>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="cloudCoverSlider" step="5">
+                </div>
+                <br>
+                <div class="drawContainer">
+                    <div class="drawButtons">
+                        <button class="drawButton" id="drawPoint" title="Point"></button>
+                        <button class="drawButton" id="drawRectangle" title="Rectangle"></button>
+                        <button class="drawButton" id="drawPolygon" title="Polygon"></button>
+                        <button class="drawButton" id="drawClear" title="Clear"></button>
+                    </div>   
+                </div>
+                <button id="getDataButton" class="runButton">Search</button> 
+                <br>
+                <h3>Search Results</h3>
+                <div id="selectedCount">Selected items: No selected</div> 
+                <div id="mainContainer">
+                    <div id="resultContainer"></div>
+                    <div class="pagination">
+                        <button id="prevPage" disabled>&#9664; Previous</button>
+                        <button id="nextPage" disabled>Next &#9654;</button>
+                    </div>
+                </div>
+            </div>
+            <div class="toggle-arrow" id="toDownloadOrder">
+                <span>NEXT PAGE (2/2) &#9654;</span>
+            </div>
         </div>
-        </br>
-        <div class="slider-container">
-          <label for="cloudCoverSlider" class="slider-label">Cloud Cover: <span id="cloudCoverValue">50</span>%</label>
-          <input type="range" min="0" max="100" value="50" class="slider" id="cloudCoverSlider" step="5">
+        <div id="downloadOrder" class="section">
+            <h2>Download Order (2/2)</h2>
+            <label for="bundleSelect">Bundle type:</label>
+            <select id="bundleSelect" class="custom-select">
+                <option value="">Select a bundle type</option>
+            </select>
+            <br>
+            <label for="savePath">Enter path to download the API order:</label>
+            <input type="text" id="savePath" placeholder="Enter full folder path here" value="/home/tidop/Descargas">
+            <h3>Selected Items to Download</h3>
+            <ul id="selectedItemsList"></ul>
+            <button id="orderDataButton" class="runButton">Order</button>
+            <div class="toggle-arrow" id="toQueryData">
+                <span>&#9664; PREVIOUS PAGE (1/2)</span>
+            </div>
         </div>
-        <br>
-        <div class="drawContainer">
-          <div class="drawButtons">
-            <button class="drawButton" id="drawPoint" title="Point"></button>
-            <button class="drawButton" id="drawRectangle" title="Rectangle"></button>
-            <button class="drawButton" id="drawPolygon" title="Polygon"></button>
-            <button class="drawButton" id="drawClear" title="Clear"></button>
-          </div>
-        </div>
-    <br>
-    <button id="getDataButton" class="runButton">Search</button>    
-    </div>
-    <br>
-    <div id="mainContainer">
-      <label for="resultContainer">Results of query:</label>
-      <div id="resultContainer"></div>  
-    </div>
     </div>
     <div id="map-container">
-      <div id="map">
-        <div id="layerList">
-          <h3>Capas</h3>
-          <ul id="layerUl"></ul>
+        <div id="map">
+            <div id="layerList">
+                <h3>Capas</h3>
+                <ul id="layerUl"></ul>
+            </div>
         </div>
-      </div>
     </div>
-  </div>      
+</div>       
   <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
   <script type="module" src="js/main.js"></script>
   <script type="module" src="js/services.js"></script>
