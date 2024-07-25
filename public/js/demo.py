@@ -14,3 +14,16 @@ json_data = {
 response = requests.post(url + "/planet/search", json=json_data)
 print(response.json())
 
+#"20220228_110536_49_2426,20230227_100512_06_2449"
+# To download
+json_data2 = {
+  "api_key": "PLAKabb0ed6e8a964c6591391d8e8bfa0980",
+  "item_type": "PSScene",
+  "item_list": "20220228_110536_49_2426",
+  "geometry": "[[-4.7051044161091555, 40.665345045431366], [-4.68694032067957, 40.665611922383825], [-4.687289043836125, 40.679443353911786], [-4.705456889722511, 40.6791763474491], [-4.7051044161091555, 40.665345045431366]]",
+  "order_dir": "/home/tidop/Descargas",
+  "product_bundle": "analytic_sr_udm2"
+}
+
+
+

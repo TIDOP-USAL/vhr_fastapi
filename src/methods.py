@@ -72,17 +72,16 @@ async def create_download(
     #Authenticate with the Planet API
     auth = get_auth(api_key)
 
+    # create random order name with hour, minute, and second
+    order_dir = pathlib.Path(order_dir)
+    order_name = f"planetorder_" + datetime.datetime.now().strftime(("%Y-%m-%d_%H-%M-%S"))
+    # Create the request
+    order_path = order_dir / order_name
+    order_path.mkdir(parents=True, exist_ok=True)
+    
     # Create the order request
     async with planet.Session(auth=auth) as sess:
         client_order = sess.client("orders")
-
-        # create random order name with hour, minute, and second
-        order_dir = pathlib.Path(order_dir)
-        order_name = f"planetorder_" + datetime.datetime.now().strftime(("%Y-%m-%d_%H-%M-%S"))
-        # Create the request
-        order_path = order_dir / order_name
-        order_path.mkdir(parents=True, exist_ok=True)
-
         # Open the item list
         item_list = [str(item) for item in item_list.split(",")]
 
@@ -96,6 +95,6 @@ async def create_download(
 
         # Create a folder in your download machine
         # Create and download the order 
-        order_path = str(order_path) 
-        await create_and_download(client_order, request, order_path)
+        order_filepath = str(order_path) 
+        await create_and_download(client_order, request, order_filepath)
         print(f"Order {order_name} has been created and downloaded.")

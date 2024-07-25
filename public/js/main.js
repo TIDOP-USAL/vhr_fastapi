@@ -274,20 +274,37 @@ document.getElementById('getDataButton').addEventListener('click', async functio
 
 
   const post_query = await get_query(apiKey, geometry, itemName, startDate, endDate, cloudCover, selectedAsset);
-  displayQueryResults(post_query, apiKey);
+  displayQueryResults(post_query, apiKey)
+});
 
 document.getElementById("orderDataButton").addEventListener('click', async function() {
+  // Get the value of the mission select and the API key
+  const itemName = document.getElementById('missionSelect').value;
+  const apiKey = document.getElementById('apiKey').value;
+
+  // Get the button element
+  const spinner = document.createElement('div');
+  spinner.className = 'spinner';
+  orderDataButton.appendChild(spinner);
+  
+  // Get the geometry drawn (if exists)
+  const features = source.getFeatures();
+  let geometry;
+  if (features.length > 0) {
+    geometry = features[0].getGeometry();
+  }
   // Get the selected items as a list of IDs from "selectedItemsList"
   const selectedItemsList = document.getElementById('selectedItemsList');
   
   // Deshabilitar el botón para evitar múltiples clics
   orderDataButton.disabled = true;
-  orderDataButton.classList.add('button-with-spinner');
+  orderDataButton.classList.add('button-disabled');
 
-  // Crear un spinner de carga
-  const spinner = document.createElement('div');
-  spinner.className = 'spinner';
-  orderDataButton.appendChild(spinner);
+  // Guardar el texto original del botón
+  const originalButtonText = orderDataButton.innerHTML;
+
+  // Cambiar el contenido del botón al spinner
+  orderDataButton.innerHTML = '<div class="spinner" role="status"></div>';
 
   const itemList = [];
   Array.from(selectedItemsList.children).forEach(item => {
@@ -297,10 +314,19 @@ document.getElementById("orderDataButton").addEventListener('click', async funct
 
    // Get the product bundle
   const productBundle = document.getElementById('bundleSelect').value;
-  // Generate a element to define a path to save the file
+
+  // Get the path to save the file
   const SavePath = document.getElementById('savePath').value;
-  await order_download(apiKey, itemName, itemList, geometry, SavePath, productBundle);
-  orderDataButton.disabled = false;
-  orderDataButton.removeChild(spinner);
-  })
+
+  // Generate a element to define a path to save the file
+  try {
+    await order_download(apiKey, itemName, itemList, geometry, SavePath, productBundle);
+  } catch (error) {
+    console.error('Error al realizar la descarga:', error);
+  } finally {
+    // Restaurar el contenido original del botón y habilitarlo nuevamente
+    orderDataButton.innerHTML = originalButtonText;
+    orderDataButton.disabled = false;
+    orderDataButton.classList.remove('button-disabled');
+  }
 });
