@@ -62,7 +62,7 @@ async def create_download(
     Args:
     - api_key (str): The Planet API key.
     - item_type (str): The item type.
-    - item_list (List[str]): Get the ID list from items
+    - item_list (str): Get the ID list from items
     - geometry (str): The geometry in string format.
     - order_dir(str): The directory to save the order.
     - product_bundle (str): The product bundle.
@@ -90,11 +90,12 @@ async def create_download(
             item_type,
             item_list,
             geometry,
-            order_path,
+            order_name,
             product_bundle,
         )
 
         # Create a folder in your download machine
-        # Create and download the order
+        # Create and download the order 
+        order_path = str(order_path) 
         await create_and_download(client_order, request, order_path)
         print(f"Order {order_name} has been created and downloaded.")

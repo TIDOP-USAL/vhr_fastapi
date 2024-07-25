@@ -157,33 +157,32 @@ const order_download = async function (apiKey, itemName, itemList, geometry, Sav
     let coordinates;
     coordinates = valid_geometry(geometry);
 
-    SavePath = SavePath.toString();
     // Crear la URL con todos los parámetros necesarios
     const url2 = `${host}/planet/download`;
-    const body = {
+    const body2 = {
     api_key: apiKey, 
     item_type: itemName,
-    item_list: itemList,
+    item_list: String(itemList),
     geometry: JSON.stringify(coordinates),
-    order_dir: SavePath,    
+    order_dir: String(SavePath),    
     product_bundle: productBundle
     };
 
     try {
-      const response = await fetch(url2, {
+      const response2 = await fetch(url2, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify(body2)
       });
 
-      if (!response.ok) {
-          throw new Error(`Error: ${response.status} - ${await response.text()}`);
+      if (!response2.ok) {
+          throw new Error(`Error: ${response2.status} - ${await response2.text()}`);
       }
 
-      const data = await response.json();
-      return data
+      const data2 = await response2.json();
+      return data2
   } catch (error) {
       console.error('Error al realizar la descarga:', error);
   }

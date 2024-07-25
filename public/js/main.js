@@ -279,24 +279,28 @@ document.getElementById('getDataButton').addEventListener('click', async functio
 document.getElementById("orderDataButton").addEventListener('click', async function() {
   // Get the selected items as a list of IDs from "selectedItemsList"
   const selectedItemsList = document.getElementById('selectedItemsList');
+  
+  // Deshabilitar el botón para evitar múltiples clics
+  orderDataButton.disabled = true;
+  orderDataButton.classList.add('button-with-spinner');
+
+  // Crear un spinner de carga
+  const spinner = document.createElement('div');
+  spinner.className = 'spinner';
+  orderDataButton.appendChild(spinner);
+
   const itemList = [];
   Array.from(selectedItemsList.children).forEach(item => {
     // Add value to a new set
     itemList.push(item.textContent);
   });
 
-  // Convert itemList to a string
-  const itemListString = itemList.toString();
-  // Get the product bundle
+   // Get the product bundle
   const productBundle = document.getElementById('bundleSelect').value;
   // Generate a element to define a path to save the file
   const SavePath = document.getElementById('savePath').value;
-  await order_download(apiKey, itemName, itemListString, geometry, SavePath, productBundle);
-
-  // Create a loading spinner
-  const spinner = document.createElement('div');
-  spinner.className = 'spinner spinner-border text-primary';
-  spinner.role = 'status';
-  document.getElementById("orderDataButton").appendChild(spinner);
-  });
+  await order_download(apiKey, itemName, itemList, geometry, SavePath, productBundle);
+  orderDataButton.disabled = false;
+  orderDataButton.removeChild(spinner);
+  })
 });
