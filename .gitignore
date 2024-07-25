@@ -4,3 +4,4 @@ gee-examples.zip
 NOTAS.txt
 package-lock.json
 /.idea
+src/*

@@ -143,6 +143,11 @@ function initializeMissionComboBox(data) {
     const selectedMission = this.value;
     initializeBandComboBox(selectedMission);
   });
+
+  // Set default value if value is "PSScene"
+  const defaultValue = 'PSScene';
+  missionSelect.value = defaultValue;
+  initializeBandComboBox(defaultValue);
 }
 
 function initializeBandComboBox(selectedMission) {
@@ -158,6 +163,10 @@ function initializeBandComboBox(selectedMission) {
       option.textContent = band;
       bandSelect.appendChild(option);
     });
+  }
+  // if Mission value is "PSScene" set default value to "ortho_analytic_4b_sr"
+  if (selectedMission === 'PSScene') {
+    bandSelect.value = 'ortho_analytic_4b_sr';
   }
 }
 
@@ -278,55 +287,35 @@ document.getElementById('getDataButton').addEventListener('click', async functio
 });
 
 document.getElementById("orderDataButton").addEventListener('click', async function() {
+  const orderDataButton = this;
+
   // Get the value of the mission select and the API key
   const itemName = document.getElementById('missionSelect').value;
   const apiKey = document.getElementById('apiKey').value;
-
-  // Get the button element
-  const spinner = document.createElement('div');
-  spinner.className = 'spinner';
-  orderDataButton.appendChild(spinner);
-  
-  // Get the geometry drawn (if exists)
   const features = source.getFeatures();
-  let geometry;
-  if (features.length > 0) {
-    geometry = features[0].getGeometry();
-  }
+  let geometry = features.length > 0 ? features[0].getGeometry() : null; // Get the geometry drawn (if exists)
+
   // Get the selected items as a list of IDs from "selectedItemsList"
   const selectedItemsList = document.getElementById('selectedItemsList');
-  
-  // Deshabilitar el botón para evitar múltiples clics
+  const itemList = Array.from(selectedItemsList.children).map(item => item.textContent); // Add value to a new set
+  const productBundle = document.getElementById('bundleSelect').value; // Get the product bundle
+  const SavePath = document.getElementById('savePath').value; // Get the path to save the file
+
   orderDataButton.disabled = true;
-  orderDataButton.classList.add('button-disabled');
-
-  // Guardar el texto original del botón
-  const originalButtonText = orderDataButton.innerHTML;
-
-  // Cambiar el contenido del botón al spinner
+  orderDataButton.classList.add('button-disabled', 'button-with-spinner');
   orderDataButton.innerHTML = '<div class="spinner" role="status"></div>';
-
-  const itemList = [];
-  Array.from(selectedItemsList.children).forEach(item => {
-    // Add value to a new set
-    itemList.push(item.textContent);
-  });
-
-   // Get the product bundle
-  const productBundle = document.getElementById('bundleSelect').value;
-
-  // Get the path to save the file
-  const SavePath = document.getElementById('savePath').value;
 
   // Generate a element to define a path to save the file
   try {
     await order_download(apiKey, itemName, itemList, geometry, SavePath, productBundle);
+    // Wait for 20 seconds
+    // await new Promise(resolve => setTimeout(resolve, 20000));
   } catch (error) {
     console.error('Error al realizar la descarga:', error);
   } finally {
     // Restaurar el contenido original del botón y habilitarlo nuevamente
-    orderDataButton.innerHTML = originalButtonText;
+    orderDataButton.innerHTML = 'Order'; 
+    orderDataButton.classList.remove('button-disabled', 'button-with-spinner');
     orderDataButton.disabled = false;
-    orderDataButton.classList.remove('button-disabled');
   }
 });
