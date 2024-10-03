@@ -45,3 +45,18 @@ async def download_planet(request: DownloadRequest):
         return await methods.create_download(**request.model_dump())
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# PROCESS PLANET IMAGERY BY A DYNNET MODEL
+@router.post("/dynnet")
+async def process_dynnet(request: DownloadRequest):
+    """
+    This function is used to process the downloaded planet imagery using a dynnet model
+    
+    Args for process 
+    
+    """
+
+    try:
+        return await methods.process_dynnet(**request.model_dump())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
