@@ -1,6 +1,6 @@
 import { valid_geometry } from './utils.js';
 
-const host = "http://127.0.0.1:8000";
+const host = "http://0.0.0.0:8000";
 
 ///////////////////////////////////////////////////////////////////////
 // Async functions to call the API

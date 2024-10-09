@@ -89,3 +89,11 @@ class DownloadRequest(BaseModel):
     geometry: str
     order_dir: str
     product_bundle: str
+
+# For the FAST API REQUEST
+class SearchRequestS2(BaseModel):
+    coords: List[float]
+    bands: List[str]
+    start_date: str
+    end_date: str
+    edge_size: int

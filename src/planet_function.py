@@ -5,7 +5,7 @@ import methods
 router = APIRouter()
 
 # POST THUMBNAILS FOR PLANET IMAGERY
-@router.post("/search")     
+@router.post("/search")
 async def post_querydata(request: SearchRequest):
     """
     This function is used to query the planet API for imagery
@@ -27,7 +27,7 @@ async def post_querydata(request: SearchRequest):
     
 
 # DOWNLOAD PLANET IMAGERY
-@router.post("/download")
+@router.post("/download_planet")
 async def download_planet(request: DownloadRequest):
     """
     This function is used to create and download order for Planet Imagery
@@ -43,20 +43,5 @@ async def download_planet(request: DownloadRequest):
 
     try:
         return await methods.create_download(**request.model_dump())
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# PROCESS PLANET IMAGERY BY A DYNNET MODEL
-@router.post("/dynnet")
-async def process_dynnet(request: DownloadRequest):
-    """
-    This function is used to process the downloaded planet imagery using a dynnet model
-    
-    Args for process 
-    
-    """
-
-    try:
-        return await methods.process_dynnet(**request.model_dump())
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
