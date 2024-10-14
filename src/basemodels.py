@@ -92,8 +92,13 @@ class DownloadRequest(BaseModel):
 
 # For the FAST API REQUEST
 class SearchRequestS2(BaseModel):
-    coords: List[float]
+    lat: float
+    lon: float
     bands: List[str]
     start_date: str
     end_date: str
     edge_size: int
+
+# For the Super resolution
+class SuperResolution(BaseModel):
+    folder: str

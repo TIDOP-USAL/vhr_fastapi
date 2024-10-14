@@ -1,7 +1,2 @@
-node_modules/*
-gee-examples.zip
-.DS_Store
-NOTAS.txt
-package-lock.json
-/.idea
-src/*
+/src/weights
+/__pycache__

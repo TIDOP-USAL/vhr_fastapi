@@ -29,10 +29,10 @@ app.include_router(sentinel2_function.router, prefix="/sentinel2")
 @app.get("/config")
 async def get_config():
     return {
-        "APP_HOST": os.getenv("APP_HOST", "127.0.0.1")
+        "APP_HOST": os.getenv("APP_HOST", "0.0.0.0")
     }
 
 # Run the app
 if __name__ == "__main__":
-    host = os.getenv("APP_HOST", "127.0.0.1")
+    host = os.getenv("APP_HOST", "0.0.0.0")
     uvicorn.run("server:app", host=host, port=8000, loop="asyncio", reload=True)
