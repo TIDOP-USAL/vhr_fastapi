@@ -6,4 +6,5 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 EXPOSE 8000
-CMD python ./src/server.py
+# CMD python ./src/server.py
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "4", "src.server:app", "-b", "0.0.0.0:8000"]

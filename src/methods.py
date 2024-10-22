@@ -14,11 +14,21 @@ import rioxarray as rxr
 
 from skimage import exposure
 
+from datetime import datetime
+
 # import torch
 # from torchvision import transforms
 # from utae_seg import utae, weight_init
 
 nest_asyncio.apply()
+
+# Cargar el modelo globalmente al inicio de la aplicación
+model = None
+
+def load_model():
+    global model
+    if model is None:
+        model = tf.saved_model.load("src/weights/sr4rs_sentinel2_bands4328_france2020_savedmodel")
 
 async def get_sentinel2(
         lat: float,
@@ -66,7 +76,9 @@ async def get_sentinel2(
     return folder
 
 async def get_sr(folder: str):
-    model = tf.saved_model.load("src/weights/sr4rs_sentinel2_bands4328_france2020_savedmodel")
+    # model = tf.saved_model.load("src/weights/sr4rs_sentinel2_bands4328_france2020_savedmodel")
+    load_model()
+
     signature = list(model.signatures.keys())[0]
     func = model.signatures[signature]
 
@@ -87,14 +99,14 @@ async def get_sr(folder: str):
         # Save the results
         pred_np = pred['output_32:0'].numpy()
         pred_np_permuted = np.transpose(pred_np, (0, 3, 1, 2)) # 4x192x192 -> 4x192x192x1
-        # pred_np_padded = np.pad(
-        #     pred_np_permuted,
-        #     pad_width=((0, 0), (0, 0), (32, 32), (32, 32)),
-        #     mode='constant',
-        #     constant_values=0
-        # )
+        pred_np_padded = np.pad(
+            pred_np_permuted,
+            pad_width=((0, 0), (0, 0), (32, 32), (32, 32)),
+            mode='constant',
+            constant_values=0
+        )
 
-        pred_np_permuted_sq = np.squeeze(pred_np_permuted).astype('uint16')
+        pred_np_permuted_sq = np.squeeze(pred_np_padded).astype('uint16')
         path_sr = f"{folder}/sr_{date_eval}.npy"
         path_list_sr.append(path_sr)
         np.save(path_sr, pred_np_permuted_sq)
@@ -109,6 +121,13 @@ async def get_vis(folder: str):
     images.sort()
     srs.sort()
 
+    current_path = os.getcwd()
+    datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    new_folder = os.path.join(current_path, "public", datetime_str)
+    print(new_folder)
+    if not os.path.exists(new_folder):
+        os.mkdir(new_folder)
+
     for i in range(len(images)):
         date_eval = images[i].split("_")[-1].split(".")[0]
 
@@ -120,16 +139,81 @@ async def get_vis(folder: str):
         sr_np = (sr_np / 10000 * 3).clip(0, 1)
         sr_np_equalized = exposure.equalize_hist(sr_np)
 
-        # Create a plot for the first image of each collection
-        fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-        ax[0].imshow(img_np_equalized[:,:, [0,1,2]])
-        ax[0].set_title("Image")
-        ax[0].axis("off")
-        ax[1].imshow(sr_np_equalized[:,:, [0,1,2]])
-        ax[1].set_title("Superresolution")
-        ax[1].axis("off")
+        # Guardar la imagen original individualmente
+        plt.imshow(img_np_equalized[:, :, [0, 1, 2]])
+        plt.title("S2 - 10m")
+        plt.axis("off")
+        image_filename = f"s2_{date_eval}.png"
+        image_path = os.path.join(new_folder, image_filename)
+        plt.savefig(image_path)
+        plt.close()
 
-        plt.savefig(f"{folder}/s2_sr_{date_eval}.png")
+        # Guardar la imagen de superresolución individualmente
+        plt.imshow(sr_np_equalized[:, :, [0, 1, 2]])
+        plt.title("S2 SR - 2.5m")
+        plt.axis("off")
+        sr_filename = f"sr_{date_eval}.png"
+        sr_path = os.path.join(new_folder, sr_filename)
+        plt.savefig(sr_path)
+        plt.close()
+
+    list_path = [os.path.join("public", datetime_str, x) for x in os.listdir(new_folder) if x.endswith(".png")]
+    return list_path
+
+# async def get_classes(temp_path: str):
+#     weights = "dynnet_ckpt/utae/weekly/best_ckpt.pth" # Path to the weights
+#     net = utae.UTAE(input_dim=4,
+#                     encoder_widths=[64, 64, 64, 128],
+#                     decoder_widths=[32, 32, 64, 128],
+#                     str_conv_k=4,
+#                     str_conv_s=2,
+#                     str_conv_p=1,
+#                     agg_mode='att_group',
+#                     encoder_norm='group',
+#                     n_head=16,
+#                     d_model=256,
+#                     d_k=4,
+#                     encoder=False,
+#                     return_maps=False,
+#                     pad_value=0,
+#                     padding_mode='reflect')
+
+#     # Initialize the weights
+#     init = weight_init.weight_init
+#     net.apply(init)
+#     state_dict = torch.load(weights,  map_location=torch.device('cpu'))["model_dict"]
+#     new_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
+#     net.load_state_dict(new_state_dict)
+#     net.eval()
+
+#     ## Normalize the data
+#     mean = [1042.59240722656, 915.618408203125, 671.260559082031, 2605.20922851562]
+#     std = [957.958435058593, 715.548767089843, 596.943908691406, 1059.90319824218]
+#     normalize = transforms.Normalize(mean=mean, std=std)
+
+#     path_list_class = []
+#     for path in os.listdir(temp_path):
+#         path_npy = temp_path + "/" + path
+#         pred_torch = torch.load(path_npy)
+#         norm_pred = normalize(pred_torch)
+
+#         ## Resize image
+#         # pred_resize = image_resize(norm_pred.numpy(), 192) # Multiple of 32
+
+#         ## Predict the image
+#         with torch.no_grad():
+#             input = torch.from_numpy(norm_pred[None][None])
+#             logit = net(input)
+#             output = torch.sigmoid(logit)
+#             output_np = output[0].cpu().numpy()
+#             output_classes = np.argmax(output_np, axis=0).astype(np.int8)
+        
+#         ## Save the classes
+#         path_classes = f"{temp_path}/classes_{path}.npy"
+#         path_list_class.append(path_classes)
+#         np.save(path_classes, output_classes)
+
+#     return path_list_class
 
 
 # async def get_classes(folder: str):

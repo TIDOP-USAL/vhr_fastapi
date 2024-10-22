@@ -33,6 +33,6 @@ async def get_config():
     }
 
 # Run the app
-if __name__ == "__main__":
-    host = os.getenv("APP_HOST", "0.0.0.0")
-    uvicorn.run("server:app", host=host, port=8000, loop="asyncio", reload=True)
+# if __name__ == "__main__":
+#     host = os.getenv("APP_HOST", "0.0.0.0")
+#     uvicorn.run("server:app", host=host, port=8000, loop="asyncio", reload=True)
