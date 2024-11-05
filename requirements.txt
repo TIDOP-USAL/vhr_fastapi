@@ -7,13 +7,23 @@ requests
 shapely
 tqdm
 uvicorn
+gunicorn
 pexpect
 decorator
 wcwidth
 cubo
 xarray
 rioxarray
-tensorflow
 matplotlib
 sci
 scikit-image
+basicsr==1.4.2
+Pillow
+opencv_python
+kornia
+open_clip_torch
+torch
+torchvision==0.16.0
+segmentation-models-pytorch
+super-image
+# git+https://github.com/openai/CLIP.git

@@ -9,7 +9,7 @@ import tempfile
 import matplotlib.pyplot as plt
 
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 import rioxarray as rxr
 
 from skimage import exposure
@@ -25,10 +25,10 @@ nest_asyncio.apply()
 # Cargar el modelo globalmente al inicio de la aplicación
 model = None
 
-def load_model():
-    global model
-    if model is None:
-        model = tf.saved_model.load("src/weights/sr4rs_sentinel2_bands4328_france2020_savedmodel")
+# def load_model():
+#     global model
+#     if model is None:
+#         model = tf.saved_model.load("src/weights/sr4rs_sentinel2_bands4328_france2020_savedmodel")
 
 async def get_sentinel2(
         lat: float,
@@ -77,7 +77,7 @@ async def get_sentinel2(
 
 async def get_sr(folder: str):
     # model = tf.saved_model.load("src/weights/sr4rs_sentinel2_bands4328_france2020_savedmodel")
-    load_model()
+    # load_model()
 
     signature = list(model.signatures.keys())[0]
     func = model.signatures[signature]

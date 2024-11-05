@@ -4,6 +4,9 @@ gee-examples.zip
 NOTAS.txt
 package-lock.json
 /.idea
-src/*
-/src/weights
+# src/*
+/src/weights/*
+/src/__pycache__/*
 /__pycache__
+/data/*
+weights/*
