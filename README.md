@@ -1,9 +1,9 @@
-# Planet FastAPI server
+# VHR FastAPI server
 
 ## Installation
 ```
-conda create -n planet_api python=3.10
-conda activate planet_api
+conda create -n fastapi python=3.10
+conda activate fastapi
 pip install -r requirements.txt
 ```
 

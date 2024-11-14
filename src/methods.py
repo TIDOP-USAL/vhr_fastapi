@@ -26,12 +26,12 @@ def load_model_sr():
     return model
 
 def load_model_build():
-    model = torch.load("weights/mit_b1unet_best_model.pth", map_location=torch.device("cpu"))
+    model = torch.load("weights/mitb1_building_unet_best_model.pth", map_location=torch.device("cpu"))
     return model
 
-def load_model_roads():
-    model = torch.load("weights/mit_b1unet_best_model.pth")
-    return model
+# def load_model_roads():
+#     model = torch.load("weights/mit_b1unet_best_model.pth")
+#     return model
 
 async def get_sentinel2(
         lat: float,
@@ -50,15 +50,17 @@ async def get_sentinel2(
         end_date=end_date,
         edge_size=edge_size,
         units="px",
-        resolution=10
+        resolution=10,
+        query={"eo:cloud_cover": {"lt": 50}}
     )
 
     dates = da.time.values.astype("datetime64[D]").astype(str).tolist()
 
-    tempfile.tempdir = os.getcwd() + "/public"
+    # tempfile.tempdir = os.getcwd() + "/public"
+    tempfile.tempdir = "/usr/src/app/public/output"
     folder = tempfile.mkdtemp()
-
     list_path = []
+    
     for i in range(0, len(dates)):
         path_image = f"{folder}/image_{dates[i]}.npy"
         data = da[i].to_numpy()
@@ -185,7 +187,7 @@ async def get_vis(folder: str):
         
         # Guardar la imagen original individualmente
         plt.imshow(img_np_equalized[:, :, [0, 1, 2]])
-        plt.title("S2 - 10m")
+        # plt.title("S2 - 10m")
         plt.axis("off")
         image_filename = f"s2_{date_eval}.png"
         image_path = os.path.join(folder, image_filename)
@@ -194,7 +196,7 @@ async def get_vis(folder: str):
 
         # Guardar la imagen de superresolución individualmente
         plt.imshow(sr_np_equalized[:, :, [0, 1, 2]])
-        plt.title("S2 SR - 2.5m")
+        # plt.title("S2 SR - 2.5m")
         plt.axis("off")
         sr_filename = f"sr_{date_eval}.png"
         sr_path = os.path.join(folder, sr_filename)
@@ -203,7 +205,7 @@ async def get_vis(folder: str):
 
         # Guardar la imagen de edificaciones individualmente
         plt.imshow(build_np, cmap="gray")
-        plt.title("Edificaciones")
+        # plt.title("Edificaciones")
         plt.axis("off")
         build_filename = f"build_{date_eval}.png"
         build_path = os.path.join(folder, build_filename)
@@ -211,20 +213,20 @@ async def get_vis(folder: str):
         plt.close()
 
         # Guardar la imagen combinada
-        # fig, ax = plt.subplots(1, 3, figsize=(15, 5))
-        # ax[0].imshow(img_np_equalized[:, :, [0, 1, 2]])
+        fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+        ax[0].imshow(img_np_equalized[:, :, [0, 1, 2]])
         # ax[0].set_title("S2 - 10m")
-        # ax[0].axis("off")
-        # ax[1].imshow(sr_np_equalized[:, :, [0, 1, 2]])
+        ax[0].axis("off")
+        ax[1].imshow(sr_np_equalized[:, :, [0, 1, 2]])
         # ax[1].set_title("S2 SR - 2.5m")
-        # ax[1].axis("off")
-        # ax[2].imshow(build_np, cmap="gray")
+        ax[1].axis("off")
+        ax[2].imshow(build_np, cmap="gray")
         # ax[2].set_title("Edificaciones")
-        # ax[2].axis("off")
-        # combined_filename = f"combined_{date_eval}.png"
-        # combined_path = os.path.join(folder, combined_filename)
-        # plt.savefig(combined_path)
-        # plt.close()
+        ax[2].axis("off")
+        combined_filename = f"combined_{date_eval}.png"
+        combined_path = os.path.join(folder, combined_filename)
+        plt.savefig(combined_path)
+        plt.close()
 
     list_path = [os.path.join(folder, x) for x in os.listdir(folder) if x.endswith(".png")]
     return list_path

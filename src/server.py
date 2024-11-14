@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import sentinel2_function
 import uvicorn
 import os
@@ -19,8 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Static files
-app.mount("/public", StaticFiles(directory="public"), name="public")
+# Mount the public directory to serve static files
+app.mount("/static", StaticFiles(directory="/usr/src/app", html=True), name="public")
 
 # Include router
 app.include_router(sentinel2_function.router, prefix="/sentinel2")
@@ -31,8 +32,3 @@ async def get_config():
     return {
         "APP_HOST": os.getenv("APP_HOST", "0.0.0.0")
     }
-
-# Run the app
-# if __name__ == "__main__":
-#     host = os.getenv("APP_HOST", "0.0.0.0")
-#     uvicorn.run("server:app", host=host, port=8000, loop="asyncio", reload=True)
