@@ -15,9 +15,9 @@ cubo
 xarray
 rioxarray
 matplotlib
+huggingface-hub==0.24.7
 sci
 scikit-image
-basicsr==1.4.2
 Pillow
 opencv_python
 kornia
@@ -27,3 +27,5 @@ torchvision==0.16.0
 segmentation-models-pytorch
 super-image
 # git+https://github.com/openai/CLIP.git
+# opencv-python-headless==4.10.0.84
+# basicsr==1.4.2
