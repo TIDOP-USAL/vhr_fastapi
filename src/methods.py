@@ -13,11 +13,14 @@ import rioxarray as rxr
 from typing import Dict, List
 from skimage import exposure
 from datetime import datetime
+from datetime import timedelta
 
 import torch
 from torchvision import transforms
 from super_image import HanModel
 from segmentation_models_pytorch import Unet
+
+from fastapi import HTTPException
 
 nest_asyncio.apply()
 
@@ -37,37 +40,48 @@ async def get_sentinel2(
         lat: float,
         lon: float,
         bands: List[str],
-        start_date: str,
-        end_date: str,
-        edge_size: int
+        fechas: str,
+        edge_size: int,
+        path: str
     ):
-    da = cubo.create(
-        lat=lat,
-        lon=lon,
-        collection="sentinel-2-l2a",
-        bands=bands,
-        start_date=start_date,
-        end_date=end_date,
-        edge_size=edge_size,
-        units="px",
-        resolution=10,
-        query={"eo:cloud_cover": {"lt": 50}}
-    )
 
-    dates = da.time.values.astype("datetime64[D]").astype(str).tolist()
+    try:
+        fechas = fechas.split(" || ")
+        print(fechas)
 
-    # tempfile.tempdir = os.getcwd() + "/public"
-    tempfile.tempdir = "/usr/src/app/public/output"
-    folder = tempfile.mkdtemp()
-    list_path = []
-    
-    for i in range(0, len(dates)):
-        path_image = f"{folder}/image_{dates[i]}.npy"
-        data = da[i].to_numpy()
-        np.save(path_image, data)
-        list_path.append(path_image)
-    
-    return folder
+        tempfile.tempdir = "/usr/src/app/public/output"
+        path = tempfile.mkdtemp()
+
+        for fecha in fechas:
+            days_delay = 10
+            print(f"Parámetros recibidos: lat={lat}, lon={lon}, fecha={fecha}")
+            fecha = datetime.strptime(fecha, "%Y-%m-%d")
+            start_date = (fecha - timedelta(days=days_delay)).strftime("%Y-%m-%d")
+            end_date = (fecha + timedelta(days=days_delay)).strftime("%Y-%m-%d")
+
+            da = cubo.create(
+                lat=lat,
+                lon=lon,
+                collection="sentinel-2-l2a",
+                bands=bands,
+                start_date=start_date,
+                end_date=end_date,
+                edge_size=edge_size,
+                units="px",
+                resolution=10,
+                query={"eo:cloud_cover": {"lt": 50}}
+            )
+
+            dates = da.time.values.astype("datetime64[D]").astype(str).tolist()
+            
+            for i in range(0, len(dates)):
+                path_image = f"{path}/image_{dates[i]}.npy"
+                data = da[i].to_numpy()
+                np.save(path_image, data)
+        return path
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=f"Error procesando Sentinel-2: {e}")
 
 async def get_sr(folder: str):
     model = load_model_sr()

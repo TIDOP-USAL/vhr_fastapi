@@ -95,9 +95,9 @@ class SearchRequestS2(BaseModel):
     lat: float
     lon: float
     bands: List[str]
-    start_date: str
-    end_date: str
+    fechas: str
     edge_size: int
+    path: str
 
 # For the Super resolution
 class SuperResolution(BaseModel):

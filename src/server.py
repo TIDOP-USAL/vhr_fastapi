@@ -6,6 +6,9 @@ import sentinel2_function
 import uvicorn
 import os
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 
@@ -30,5 +33,14 @@ app.include_router(sentinel2_function.router, prefix="/sentinel2")
 @app.get("/config")
 async def get_config():
     return {
-        "APP_HOST": os.getenv("APP_HOST", "0.0.0.0")
+        "APP_HOST": os.getenv("APP_HOST", "0.0.0.0"),
+        "APP_PORT": 8000
     }
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    logger = logging.getLogger("uvicorn")
+    logger.info(f"Request: {request.method} {request.url}")
+    response = await call_next(request)
+    logger.info(f"Response status: {response.status_code}")
+    return response
